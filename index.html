@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Naranja Gato | Más clientes desde Google Maps</title>
+  <meta name="description" content="Ayudamos a canchas de pádel y negocios locales a conseguir más clientes desde Google Maps. Toma el control de tu perfil y aumenta tus reservas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: #0f1219;
+      --foreground: #f5f5f7;
+      --card: #161b24;
+      --card-foreground: #f5f5f7;
+      --primary: #e87f36;
+      --primary-foreground: #0f1219;
+      --secondary: #1c222d;
+      --secondary-foreground: #f5f5f7;
+      --muted: #1c222d;
+      --muted-foreground: #9ca3af;
+      --border: #2a3140;
+      --radius: 0.625rem;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--background);
+      color: var(--foreground);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .animate-fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
+      opacity: 0;
+    }
+
+    .animate-delay-1 { animation-delay: 0.1s; }
+    .animate-delay-2 { animation-delay: 0.2s; }
+    .animate-delay-3 { animation-delay: 0.3s; }
+    .animate-delay-4 { animation-delay: 0.4s; }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      transition: all 0.3s ease;
+    }
+
+    .header.scrolled {
+      background: rgba(15, 18, 25, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-content {
+      max-width: 1152px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--primary-foreground);
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .nav {
+      display: none;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .nav {
+        display: flex;
+      }
+    }
+
+    .nav a {
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+      transition: color 0.2s;
+    }
+
+    .nav a:hover {
+      color: var(--foreground);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn-lg {
+      padding: 1rem 2rem;
+      font-size: 1.125rem;
+    }
+
+    .btn-desktop {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .btn-desktop {
+        display: inline-flex;
+      }
+    }
+
+    .mobile-menu-btn {
+      display: flex;
+      padding: 0.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--foreground);
+    }
+
+    @media (min-width: 768px) {
+      .mobile-menu-btn {
+        display: none;
+      }
+    }
+
+    .mobile-menu {
+      display: none;
+      background: var(--background);
+      border-top: 1px solid var(--border);
+      padding: 1rem;
+    }
+
+    .mobile-menu.open {
+      display: block;
+    }
+
+    .mobile-menu a {
+      display: block;
+      padding: 0.75rem 0;
+      color: var(--muted-foreground);
+    }
+
+    .mobile-menu .btn {
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 5rem 1rem;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .hero-bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+    }
+
+    .hero-bg-circle-1 {
+      top: 25%;
+      left: 25%;
+      width: 384px;
+      height: 384px;
+      background: rgba(232, 127, 54, 0.05);
+    }
+
+    .hero-bg-circle-2 {
+      bottom: 25%;
+      right: 25%;
+      width: 256px;
+      height: 256px;
+      background: rgba(232, 127, 54, 0.1);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      max-width: 896px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      background: var(--secondary);
+      border: 1px solid var(--border);
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-badge svg {
+      width: 16px;
+      height: 16px;
+      color: var(--primary);
+    }
+
+    .hero h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 1.5rem;
+      text-wrap: balance;
+    }
+
+    @media (min-width: 768px) {
+      .hero h1 {
+        font-size: 3.75rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .hero h1 {
+        font-size: 4.5rem;
+      }
+    }
+
+    .hero h1 span {
+      color: var(--primary);
+    }
+
+    .hero-description {
+      font-size: 1.125rem;
+      color: var(--muted-foreground);
+      margin-bottom: 2.5rem;
+      max-width: 672px;
+      margin-left: auto;
+      margin-right: auto;
+      text-wrap: pretty;
+    }
+
+    @media (min-width: 768px) {
+      .hero-description {
+        font-size: 1.25rem;
+      }
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    @media (min-width: 640px) {
+      .hero-cta {
+        flex-direction: row;
+      }
+    }
+
+    .hero-cta .btn svg {
+      width: 20px;
+      height: 20px;
+      transition: transform 0.2s;
+    }
+
+    .hero-cta .btn:hover svg {
+      transform: translateX(4px);
+    }
+
+    .hero-cta-note {
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+    }
+
+    /* Sections */
+    .section {
+      padding: 6rem 1rem;
+    }
+
+    .section-alt {
+      background: rgba(28, 34, 45, 0.3);
+    }
+
+    .container {
+      max-width: 1152px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-label {
+      display: block;
+      color: var(--primary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-wrap: balance;
+    }
+
+    @media (min-width: 768px) {
+      .section-title {
+        font-size: 3rem;
+      }
+    }
+
+    .section-description {
+      color: var(--muted-foreground);
+      font-size: 1.125rem;
+      max-width: 672px;
+      margin: 0 auto;
+    }
+
+    /* Problem Cards */
+    .problem-grid {
+      display: grid;
+      gap: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .problem-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .problem-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: border-color 0.2s;
+    }
+
+    .problem-card:hover {
+      border-color: rgba(232, 127, 54, 0.5);
+    }
+
+    .problem-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: rgba(232, 127, 54, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .problem-icon svg {
+      width: 24px;
+      height: 24px;
+      color: var(--primary);
+    }
+
+    .problem-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .problem-card p {
+      color: var(--muted-foreground);
+      line-height: 1.6;
+    }
+
+    /* Solution Section */
+    .solution-grid {
+      display: grid;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    @media (min-width: 1024px) {
+      .solution-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .solution-content h2 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-wrap: balance;
+    }
+
+    @media (min-width: 768px) {
+      .solution-content h2 {
+        font-size: 3rem;
+      }
+    }
+
+    .solution-content h2 span {
+      color: var(--primary);
+    }
+
+    .solution-content > p {
+      color: var(--muted-foreground);
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+      text-wrap: pretty;
+    }
+
+    .solution-features {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .solution-feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .solution-feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: rgba(232, 127, 54, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .solution-feature-icon svg {
+      width: 20px;
+      height: 20px;
+      color: var(--primary);
+    }
+
+    .solution-feature h3 {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .solution-feature p {
+      color: var(--muted-foreground);
+    }
+
+    /* Google Maps Card */
+    .maps-card-wrapper {
+      position: relative;
+    }
+
+    .maps-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 25px 50px -12px rgba(232, 127, 54, 0.05);
+    }
+
+    .maps-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .maps-card-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      background: rgba(232, 127, 54, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .maps-card-info h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .maps-card-stars {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .maps-card-stars span {
+      color: var(--muted-foreground);
+      font-size: 0.875rem;
+      margin-left: 0.25rem;
+    }
+
+    .maps-card-type {
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+    }
+
+    .maps-card-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .maps-card-status {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+
+    .status-open {
+      color: #22c55e;
+      font-weight: 500;
+    }
+
+    .maps-card-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .maps-card-btn {
+      flex: 1;
+      text-align: center;
+      padding: 0.5rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .maps-card-btn-primary {
+      background: var(--primary);
+      color: var(--primary-foreground);
+    }
+
+    .maps-card-btn-secondary {
+      background: var(--secondary);
+      color: var(--secondary-foreground);
+      border: 1px solid var(--border);
+    }
+
+    .maps-card-badge {
+      position: absolute;
+      top: -1rem;
+      right: -1rem;
+      background: var(--primary);
+      color: var(--primary-foreground);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 700;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Benefits Grid */
+    .benefits-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .benefits-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .benefit-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.2s;
+    }
+
+    .benefit-card:hover {
+      border-color: rgba(232, 127, 54, 0.5);
+      transform: translateY(-4px);
+    }
+
+    .benefit-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: rgba(232, 127, 54, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .benefit-icon svg {
+      width: 24px;
+      height: 24px;
+      color: var(--primary);
+    }
+
+    .benefit-stat {
+      margin-bottom: 1rem;
+    }
+
+    .benefit-stat-value {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .benefit-stat-label {
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+      margin-left: 0.5rem;
+    }
+
+    .benefit-card h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .benefit-card p {
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+      line-height: 1.6;
+    }
+
+    /* Proof Section */
+    .proof-grid {
+      display: grid;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    @media (min-width: 1024px) {
+      .proof-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .proof-comparison {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .comparison-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .comparison-card.after {
+      border-width: 2px;
+      border-color: rgba(232, 127, 54, 0.5);
+    }
+
+    .comparison-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .comparison-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .comparison-dot.red { background: #ef4444; }
+    .comparison-dot.green { background: #22c55e; }
+
+    .comparison-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted-foreground);
+    }
+
+    .comparison-label.after {
+      color: var(--primary);
+    }
+
+    .comparison-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .comparison-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--muted-foreground);
+    }
+
+    .comparison-card.after .comparison-list li {
+      color: var(--foreground);
+    }
+
+    .comparison-icon {
+      font-weight: 600;
+    }
+
+    .comparison-icon.red { color: #ef4444; }
+    .comparison-icon.green { color: #22c55e; }
+
+    .proof-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .proof-stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .proof-stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: rgba(232, 127, 54, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+
+    .proof-stat-icon svg {
+      width: 24px;
+      height: 24px;
+      color: var(--primary);
+    }
+
+    .proof-stat-value {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .proof-stat-label {
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+    }
+
+    /* CTA Section */
+    .cta-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @media (min-width: 768px) {
+      .cta-card {
+        padding: 3rem;
+      }
+    }
+
+    .cta-bg {
+      position: absolute;
+      width: 256px;
+      height: 256px;
+      background: rgba(232, 127, 54, 0.05);
+      border-radius: 50%;
+      filter: blur(80px);
+    }
+
+    .cta-bg-1 {
+      top: 0;
+      left: 0;
+      transform: translate(-50%, -50%);
+    }
+
+    .cta-bg-2 {
+      bottom: 0;
+      right: 0;
+      transform: translate(50%, 50%);
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 10;
+      max-width: 896px;
+      margin: 0 auto;
+    }
+
+    .cta-includes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .cta-include {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .cta-include svg {
+      width: 16px;
+      height: 16px;
+      color: var(--primary);
+    }
+
+    .cta-note {
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+      margin-top: 1.5rem;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 3rem 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-content {
+      max-width: 1152px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .footer-content {
+        flex-direction: row;
+      }
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-logo-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+      color: var(--primary-foreground);
+    }
+
+    .footer-logo span {
+      font-weight: 600;
+    }
+
+    .footer-text {
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+      text-align: center;
+    }
+
+    /* Scroll animations */
+    .scroll-animate {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .scroll-animate.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .scroll-animate-delay-1 { transition-delay: 0.1s; }
+    .scroll-animate-delay-2 { transition-delay: 0.2s; }
+    .scroll-animate-delay-3 { transition-delay: 0.3s; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="header-content">
+      <a href="#" class="logo">
+        <div class="logo-icon">NG</div>
+        <span class="logo-text">Naranja Gato</span>
+      </a>
+
+      <nav class="nav">
+        <a href="#problema">El Problema</a>
+        <a href="#solucion">La Solucion</a>
+        <a href="#beneficios">Beneficios</a>
+      </nav>
+
+      <button class="btn btn-primary btn-desktop">Presupuesto Gratis</button>
+
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#problema">El Problema</a>
+      <a href="#solucion">La Solucion</a>
+      <a href="#beneficios">Beneficios</a>
+      <button class="btn btn-primary">Presupuesto Gratis</button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-bg-circle hero-bg-circle-1"></div>
+      <div class="hero-bg-circle hero-bg-circle-2"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-badge animate-fade-in-up">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        Google Maps para negocios locales
+      </div>
+
+      <h1 class="animate-fade-in-up animate-delay-1">
+        Todos los días perdés clientes <span>porque no controlás</span> tu Google Maps
+      </h1>
+
+      <p class="hero-description animate-fade-in-up animate-delay-2">
+        Toma el control de tu ficha de Google y empieza a conseguir mas reservas 
+        sin pagar publicidad. Nosotros nos encargamos.
+      </p>
+
+      <div class="hero-cta animate-fade-in-up animate-delay-3">
+        <button class="btn btn-primary btn-lg">
+          Quiero el presupuesto gratis
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+        <span class="hero-cta-note">Sin compromiso - Analisis en 24h</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem Section -->
+  <section class="section section-alt" id="problema">
+    <div class="container">
+      <div class="section-header scroll-animate">
+        <span class="section-label">El problema</span>
+        <h2 class="section-title">¿Por que estas perdiendo clientes cada dia?</h2>
+        <p class="section-description">
+          La mayoria de negocios locales no saben que Google Maps es su principal 
+          fuente de clientes. Y lo peor: lo estan ignorando.
+        </p>
+      </div>
+
+      <div class="problem-grid">
+        <div class="problem-card scroll-animate scroll-animate-delay-1">
+          <div class="problem-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+          </div>
+          <h3>No apareces en las busquedas</h3>
+          <p>Tu negocio no sale cuando alguien busca "cancha de padel cerca de mi". Resultado: clientes perdidos que van directos a tu competencia.</p>
+        </div>
+
+        <div class="problem-card scroll-animate scroll-animate-delay-2">
+          <div class="problem-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <h3>Tu ficha esta descontrolada</h3>
+          <p>Horarios mal, fotos antiguas, resenas sin responder... Google te penaliza y te hace invisible frente a negocios que si cuidan su perfil.</p>
+        </div>
+
+        <div class="problem-card scroll-animate scroll-animate-delay-3">
+          <div class="problem-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+              <polyline points="17 18 23 18 23 12"></polyline>
+            </svg>
+          </div>
+          <h3>Tu competencia te roba clientes</h3>
+          <p>Mientras tu no haces nada, otros negocios de tu zona estan optimizando su ficha y quedandose con TUS clientes potenciales.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution Section -->
+  <section class="section" id="solucion">
+    <div class="container">
+      <div class="solution-grid">
+        <div class="solution-content scroll-animate">
+          <span class="section-label">La solucion</span>
+          <h2><span>Naranja Gato</span> toma el control de tu perfil</h2>
+          <p>
+            Nos encargamos de optimizar y gestionar tu ficha de Google Maps 
+            para que aparezcas primero cuando alguien busque tu tipo de negocio en tu zona. 
+            Tu solo te preocupas de atender a los nuevos clientes.
+          </p>
+
+          <div class="solution-features">
+            <div class="solution-feature">
+              <div class="solution-feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3>Tomamos el control total</h3>
+                <p>Verificamos, optimizamos y gestionamos tu ficha para que siempre este perfecta.</p>
+              </div>
+            </div>
+
+            <div class="solution-feature">
+              <div class="solution-feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+              </div>
+              <div>
+                <h3>Resultados rapidos</h3>
+                <p>En pocas semanas empiezas a ver mas visitas, mas llamadas y mas reservas.</p>
+              </div>
+            </div>
+
+            <div class="solution-feature">
+              <div class="solution-feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3>Sin complicaciones</h3>
+                <p>Nos encargamos de todo. No necesitas saber nada tecnico.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="maps-card-wrapper scroll-animate scroll-animate-delay-2">
+          <div class="maps-card">
+            <div class="maps-card-header">
+              <div class="maps-card-avatar">SG</div>
+              <div class="maps-card-info">
+                <h3>Tu negocio</h3>
+                <div class="maps-card-stars">
+                  <span>&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                  <span>(127 resenas)</span>
+                </div>
+                <p class="maps-card-type">Rubro - Tu Ciudad</p>
+              </div>
+            </div>
+
+            <div class="maps-card-details">
+              <div class="maps-card-status">
+                <span class="status-dot"></span>
+                <span class="status-open">Abierto</span>
+                <span style="color: var(--muted-foreground)">- Cierra a las 22:00</span>
+              </div>
+              <div style="font-size: 0.875rem; color: var(--muted-foreground)">
+                Calle Principal 123, Tu Ciudad
+              </div>
+              <div style="font-size: 0.875rem; color: var(--muted-foreground)">
+                +54 11 0000 0000
+              </div>
+            </div>
+
+            <div class="maps-card-actions">
+              <div class="maps-card-btn maps-card-btn-primary">Reservar</div>
+              <div class="maps-card-btn maps-card-btn-secondary">Como llegar</div>
+            </div>
+          </div>
+
+          <div class="maps-card-badge">+300% visibilidad</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="section section-alt" id="beneficios">
+    <div class="container">
+      <div class="section-header scroll-animate">
+        <span class="section-label">Los beneficios</span>
+        <h2 class="section-title">Lo que conseguiras con Naranja Gato</h2>
+        <p class="section-description">
+          Resultados reales para tu negocio. Mas clientes, mas resenas, mas visibilidad.
+        </p>
+      </div>
+
+      <div class="benefits-grid">
+        <div class="benefit-card scroll-animate scroll-animate-delay-1">
+          <div class="benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </div>
+          <div class="benefit-stat">
+            <span class="benefit-stat-value">+300%</span>
+            <span class="benefit-stat-label">de visitas</span>
+          </div>
+          <h3>Mas visibilidad local</h3>
+          <p>Aparece en los primeros resultados cuando alguien busca tu tipo de negocio en tu zona.</p>
+        </div>
+
+        <div class="benefit-card scroll-animate scroll-animate-delay-2">
+          <div class="benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <div class="benefit-stat">
+            <span class="benefit-stat-value">+85%</span>
+            <span class="benefit-stat-label">mas resenas</span>
+          </div>
+          <h3>Mas resenas positivas</h3>
+          <p>Implementamos estrategias para conseguir mas resenas de 5 estrellas de forma natural.</p>
+        </div>
+
+        <div class="benefit-card scroll-animate scroll-animate-delay-3">
+          <div class="benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+              <path d="M9 16l2 2 4-4"></path>
+            </svg>
+          </div>
+          <div class="benefit-stat">
+            <span class="benefit-stat-value">+150%</span>
+            <span class="benefit-stat-label">de reservas</span>
+          </div>
+          <h3>Mas reservas directas</h3>
+          <p>Convierte visitantes en clientes con llamadas a la accion claras y un perfil optimizado.</p>
+        </div>
+
+        <div class="benefit-card scroll-animate scroll-animate-delay-3">
+          <div class="benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+            </svg>
+          </div>
+          <div class="benefit-stat">
+            <span class="benefit-stat-value">$0</span>
+            <span class="benefit-stat-label">en ads</span>
+          </div>
+          <h3>Sin pagar publicidad</h3>
+          <p>Todo el trafico es organico. No necesitas gastar en anuncios de Google ni Facebook.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- CTA Section -->
+  <section class="section section-alt">
+    <div class="container" style="max-width: 896px;">
+      <div class="cta-card scroll-animate">
+        <div class="cta-bg cta-bg-1"></div>
+        <div class="cta-bg cta-bg-2"></div>
+
+        <div class="cta-content">
+          <span class="section-label">Empieza ahora</span>
+          <h2 class="section-title">¿Listo para dejar de perder clientes?</h2>
+          <p class="section-description" style="max-width: 672px; margin: 0 auto 2rem;">
+            Solicita tu analisis gratuito y descubre exactamente que esta fallando 
+            en tu perfil de Google Maps y como solucionarlo.
+          </p>
+
+          <div class="cta-includes">
+            <div class="cta-include">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <span>Analisis completo de tu ficha actual</span>
+            </div>
+            <div class="cta-include">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <span>Comparativa con tu competencia</span>
+            </div>
+            <div class="cta-include">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <span>Plan de accion personalizado</span>
+            </div>
+            <div class="cta-include">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <span>Sin compromiso ni costo</span>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-lg">
+            Solicitar presupuesto gratis
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+
+          <p class="cta-note">Respuesta en menos de 24 horas</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <div class="footer-logo-icon">SG</div>
+        <span>Naranja Gato</span>
+      </div>
+
+      <p class="footer-text">
+        Ayudamos a negocios locales a conseguir mas clientes desde Google Maps.
+      </p>
+
+      <p class="footer-text">
+        &copy; 2026 Naranja Gato. Todos los derechos reservados.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Header scroll effect
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+      const isOpen = mobileMenu.classList.contains('open');
+      mobileMenuBtn.setAttribute('aria-label', isOpen ? 'Cerrar menu' : 'Abrir menu');
+      mobileMenuBtn.innerHTML = isOpen 
+        ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
+        : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>';
+    });
+
+    // Close mobile menu when clicking a link
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        mobileMenuBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>';
+      });
+    });
+
+    // Scroll animations
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.scroll-animate').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
